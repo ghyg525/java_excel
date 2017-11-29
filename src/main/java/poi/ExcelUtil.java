@@ -1,14 +1,16 @@
-package jxl;
+package poi;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import jxl.Workbook;
-import jxl.write.Label;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 
 
 /**
@@ -28,17 +30,18 @@ public class ExcelUtil {
 	 */
 	public static OutputStream write(OutputStream outputStream, List<List<Object>> dataList) throws Exception {
 		// 创建工作簿(可读可写)
-		WritableWorkbook workbook = Workbook.createWorkbook(outputStream);
+		Workbook workbook = new XSSFWorkbook();
 		// 生成名为"first"的工作表，参数0表示这是第一页
-		WritableSheet sheet = workbook.createSheet("first", 0);
+		Sheet sheet = workbook.createSheet("first");
 		//填充文本  单元格位置是[(0,0)=(A,1)|(1,2)=(B,3)]
 		for (int i=0; i<dataList.size(); i++) {
+			Row row = sheet.createRow(i);
 			List<Object> list = dataList.get(i);
 			for (int j=0; j<list.size(); j++) {
-				sheet.addCell(new Label(j, i, list.get(j)==null ? "" :list.get(j).toString()));
+				row.createCell(j).setCellValue(list.get(j)==null ? "" :list.get(j).toString());
 			}
 		}
-		workbook.write();
+		workbook.write(outputStream);
 		workbook.close();
 		return outputStream;
 	}
@@ -52,18 +55,17 @@ public class ExcelUtil {
 	 */
 	public static List<List<Object>> read(InputStream inputStream) throws Exception {
 		// 创建工作簿(只读)
-		Workbook workbook = Workbook.getWorkbook(inputStream);
+		Workbook workbook = new XSSFWorkbook(inputStream);
 		// 获取第一页工作表
-		Sheet sheet = workbook.getSheet(0); 
-		int rows = sheet.getRows(); // 总行数
-		int columns = sheet.getColumns(); // 总列数
-		List<List<Object>> dataList = new ArrayList<>(rows);
+		Sheet sheet = workbook.getSheetAt(0); 
+		List<List<Object>> dataList = new ArrayList<>(sheet.getLastRowNum());
 		List<Object> rowList = null;
-		for(int i=0; i<rows; i++) {
-			rowList = new ArrayList<>(columns);
-			for(int j=0; j<columns; j++) {
-				Cell cell = sheet.getCell(i, j);
-				rowList.add(cell.getContents());
+		for(int i=sheet.getFirstRowNum(); i<=sheet.getLastRowNum(); i++) {
+			Row row = sheet.getRow(i);
+			rowList = new ArrayList<>(row.getLastCellNum());
+			for(int j=row.getFirstCellNum(); j<=row.getLastCellNum(); j++) {
+				Cell cell = row.getCell(j);
+				rowList.add(cell.getStringCellValue());
 			}
 			dataList.add(rowList);
 		}
