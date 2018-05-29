@@ -62,7 +62,7 @@ public class ExcelUtil {
 		for(int i=0; i<rows; i++) {
 			rowList = new ArrayList<>(columns);
 			for(int j=0; j<columns; j++) {
-				Cell cell = sheet.getCell(i, j);
+				Cell cell = sheet.getCell(j, i);
 				rowList.add(cell.getContents());
 			}
 			dataList.add(rowList);
