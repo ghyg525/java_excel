@@ -1,10 +1,5 @@
 package poi;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -263,7 +258,7 @@ public class ExcelUtil {
 		ClientAnchor anchor = (workbook instanceof XSSFWorkbook) ? 
 			new XSSFClientAnchor(writeImageBean.getDx1(), writeImageBean.getDy1(), writeImageBean.getDx2(), writeImageBean.getDy2(), (short)writeImageBean.getCol1(), writeImageBean.getRow1(), (short)writeImageBean.getCol2(), writeImageBean.getRow2()) :
 			new HSSFClientAnchor(writeImageBean.getDx1(), writeImageBean.getDy1(), writeImageBean.getDx2(), writeImageBean.getDy2(), (short)writeImageBean.getCol1(), writeImageBean.getRow1(), (short)writeImageBean.getCol2(), writeImageBean.getRow2());
-		drawing.createPicture(anchor, workbook.addPicture(writeImageBean.getBytes(), Workbook.PICTURE_TYPE_JPEG));
+		drawing.createPicture(anchor, workbook.addPicture(writeImageBean.getBytes(), Workbook.PICTURE_TYPE_JPEG)); // 此处图片类型先用固定值，亲测使用png图片可以写入成功
 		workbook.write(outputStream);
 		workbook.close();
 	}
@@ -449,29 +444,5 @@ public class ExcelUtil {
 			return this;
 		}
 	}
-	
-	
-	
-	
-	public static void main(String[] args) throws Exception {
-		InputStream inputStream = new FileInputStream(new File("C:\\Users\\Administrator\\Desktop\\1.xlsx"));
-		OutputStream outputStream = new FileOutputStream(new File("C:\\Users\\Administrator\\Desktop\\2.xlsx"));
-		byte[] bytes = toByteArray(new FileInputStream(new File("C:\\Users\\Administrator\\Desktop\\1.jpg")));
-		WriteImageBean imageBean = new WriteImageBean().setBytes(bytes)
-				.setRow1(4).setCol1(3).setDx1(0).setDy1(0)
-				.setRow2(8).setCol2(5).setDx2(0).setDy2(0);
-		writeImage(inputStream, outputStream, imageBean);
-	
-	}
-	private static byte[] toByteArray(InputStream in) throws IOException {
-		 
-	    ByteArrayOutputStream out = new ByteArrayOutputStream();
-	    byte[] buffer = new byte[1024 * 4];
-	    int n = 0;
-	    while ((n = in.read(buffer)) != -1) {
-	        out.write(buffer, 0, n);
-	    }
-	    return out.toByteArray();
-	}
-	
+		
 }
