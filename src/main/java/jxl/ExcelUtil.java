@@ -13,6 +13,7 @@ import jxl.write.WritableWorkbook;
 
 /**
  * Excel文件处理工具
+ * 只支持xls格式文件
  * @author YangJie
  * @createTime 2015年4月7日 上午11:22:52
  */
